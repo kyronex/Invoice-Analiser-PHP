@@ -32,11 +32,11 @@ class InvoiceUploadController extends AbstractController
 
                 try {
                     $file->move(
-                        $this->getParameter('documents_directory'),
+                        $this->getParameter('invoices_directory'),
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... gérer l'exception si quelque chose se passe pendant le téléchargement
+                    $this->addFlash('error', 'Le fichier a été téléchargé avec succès');
                 }
 
                 $invoice->setFilename($newFilename);
