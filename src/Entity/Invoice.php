@@ -26,4 +26,38 @@ class Invoice
     {
         return $this->id;
     }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(string $filename): self
+    {
+        $this->filename = $filename;
+        return $this;
+    }
+
+    public function getOriginalFilename(): ?string
+    {
+        return $this->originalFilename;
+    }
+
+    public function setOriginalFilename(string $originalFilename): self
+    {
+        $this->originalFilename = $originalFilename;
+        return $this;
+    }
+
+
+    public function getUploadedAt(): ?\DateTimeImmutable
+    {
+        return $this->uploadedAt;
+    }
+
+    public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
+    {
+        $this->uploadedAt = $uploadedAt;
+        return $this;
+    }
 }
