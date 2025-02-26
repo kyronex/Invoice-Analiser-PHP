@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\InvoiceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: InvoiceRepository::class)]
 class Invoice
@@ -21,6 +22,12 @@ class Invoice
 
     #[ORM\Column]
     private ?\DateTimeImmutable $uploadedAt = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $responseIa = null;
+     
+    #[ORM\Column(length: 255)]
+    private ?string $dirname = null;
 
     public function getId(): ?int
     {
@@ -58,6 +65,28 @@ class Invoice
     public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
     {
         $this->uploadedAt = $uploadedAt;
+        return $this;
+    }
+
+    public function getResponseIa(): ?string
+    {
+        return $this->responseIa;
+    }
+
+    public function setResponseIa(string $responseIa): self
+    {
+        $this->responseIa = $responseIa;
+        return $this;
+    }
+
+    public function getDirname(): ?string
+    {
+        return $this->dirname;
+    }
+
+    public function setDirname(string $dirname): self
+    {
+        $this->dirname = $dirname;
         return $this;
     }
 }

@@ -1,0 +1,7 @@
+{
+    "systemPrompt": "Tu recois des document que tu analyse et tu doit identifier le type document et retourner au format JSON",
+    "userPrompt": "Recupere les informations",
+    "modelM": "mistral-large-latest",
+    "modelP": "pixtral-large-latest",
+    "url": "https://api.mistral.ai/v1/chat/completions"   
+}
