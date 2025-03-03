@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\ApiMistral;
+use App\Service\Tools;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,20 +18,21 @@ use App\Entity\Invoice;
 class InvoiceUploadController extends AbstractController
 {
     private $apiMistral;
+    private $tools;
 
     public function __construct(ApiMistral $apiMistral)
     {
         $this->apiMistral = $apiMistral;
+        $this->tools = new Tools();
     }
 
     #[Route('/invoice/upload', name: 'app_invoice_upload')]
-
     public function index(Request $request, SluggerInterface $slugger, EntityManagerInterface $entMan): Response
     {
         $invoice = new Invoice();
         $form = $this->createForm(InvoiceType::class, $invoice);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
 
@@ -55,15 +57,19 @@ class InvoiceUploadController extends AbstractController
                 $invoice->setDirname($this->getParameter('invoices_directory') . $newFilename);
                 $invoice->setUploadedAt(new \DateTimeImmutable());
 
+                dump("invoice");
                 dump($invoice);
-                
-                dump($this->apiMistral->getApiConf());
-                $prompt = $this->apiMistral->getApiConf()->userPrompt;
 
-                $response = $this->apiMistral->getChatCompletionDoc($this->getParameter('invoices_directory') . $newFilename , $prompt);                
-                dump($response);
+                $response = $this->apiMistral->getChatCompletionDoc($this->getParameter('invoices_directory') . $newFilename);
 
-exit;
+                if ($response) {
+                    dump("this->apiMistral->getApiResponseFormat('array')");
+                    dump($this->apiMistral->getApiResponseFormat('array'));
+                    dump("this->apiMistral->getApiResponseFormat('arracy')");
+                    dump($this->apiMistral->getApiResponseFormat('arracy'));
+                }
+
+                exit;
                 //$entMan->persist($invoice);
                 //$entMan->flush();
 
@@ -75,5 +81,11 @@ exit;
         return $this->render('invoice_upload/index.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    private function moveUpload(): bool
+    {
+
+        return true;
     }
 }
