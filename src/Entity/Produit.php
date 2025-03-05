@@ -27,9 +27,13 @@ class Produit
     #[ORM\OneToMany(mappedBy: 'produit', targetEntity: FactureProduit::class)]
     private $factureProduits;
 
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: EvoProduit::class)]
+    private $evoProduits;
+
     public function __construct()
     {
         $this->factureProduits = new ArrayCollection();
+        $this->evoProduits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,5 +80,13 @@ class Produit
     public function getFactureProduits(): Collection
     {
         return $this->factureProduits;
+    }
+
+    /**
+     * @return Collection<int, EvoProduit>
+     */
+    public function getEvoProduits(): Collection
+    {
+        return $this->evoProduits;
     }
 }

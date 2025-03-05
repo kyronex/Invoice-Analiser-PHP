@@ -97,4 +97,12 @@ class Client
         $this->intiatedAt = $intiatedAt;
         return $this;
     }
+
+    /**
+     * @return Collection<int, Invoice>
+     */
+    public function getInvoices(): Collection
+    {
+        return $this->invoices;
+    }
 }
