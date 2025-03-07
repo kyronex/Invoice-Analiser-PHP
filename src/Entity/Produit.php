@@ -19,10 +19,16 @@ class Produit
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $reference = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $initializedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'produit', targetEntity: FactureProduit::class)]
     private $factureProduits;
@@ -52,6 +58,17 @@ class Produit
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): self
+    {
+        $this->description = $description;
+        return $this;
+    }
+
     public function getReference(): ?string
     {
         return $this->reference;
@@ -71,6 +88,17 @@ class Produit
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getInitializedAt(): ?\DateTimeImmutable
+    {
+        return $this->initializedAt;
+    }
+
+    public function setInitializedAt(\DateTimeImmutable $initializedAt): self
+    {
+        $this->initializedAt = $initializedAt;
         return $this;
     }
 

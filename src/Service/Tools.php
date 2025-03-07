@@ -20,4 +20,17 @@ class Tools
 
         return $cleaned;
     }
+
+    public function arrayizeData($data): ?array
+    {
+        $arrayliseData = [];
+        if (isset($data)) {
+            if (is_array($data)) {
+                $arrayliseData = $data;
+            } else {
+                $arrayliseData = array($data);
+            }
+        }
+        return $arrayliseData;
+    }
 }

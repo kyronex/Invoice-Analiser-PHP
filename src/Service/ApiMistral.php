@@ -11,7 +11,9 @@ class ApiMistral
     private $client;
     private $apiKey;
     private $fileConf;
+    private $urlNgrokDoc;
     private $apiConf;
+    private $apiResponseStatusCode;
     private $apiResponseRaw;
     private $apiResponseToArray;
     private $apiResponseUsage;
@@ -25,7 +27,9 @@ class ApiMistral
         $this->client = $client;
         $this->apiKey = $apiKey;
         $this->fileConf = $fileConf;
+        $this->urlNgrokDoc = null;
         $this->apiConf = null;
+        $this->apiResponseStatusCode = null;
         $this->apiResponseRaw = null;
         $this->apiResponseToArray = null;
         $this->apiResponseUsage = null;
@@ -51,10 +55,9 @@ class ApiMistral
 
     public function getChatCompletionDoc(string $doc)
     {
-        $urlDoc = str_replace("/var/www/html/public/", $_ENV["NGROK_URL"], $doc);
-        dump("urlDoc");
-        dump($urlDoc);
+        $this->setUrlNgrokDoc($doc);
 
+        // TODO deplace code vers UPLOADS ou REJECTS Vers Service approprier
         // dump($_ENV["DIR_STORAGE_UPLOADS"] . pathinfo($doc, PATHINFO_BASENAME));
         // copy($doc, $_ENV["DIR_STORAGE_UPLOADS"] . pathinfo($doc, PATHINFO_BASENAME));
 
@@ -72,7 +75,7 @@ class ApiMistral
                     'content' => [
                         [
                             'type' => 'document_url',
-                            'document_url' => $urlDoc
+                            'document_url' => $this->getUrlNgrokDoc()
                         ],
                     ],
                     'role' => 'user',
@@ -93,10 +96,9 @@ class ApiMistral
             'json' => $jsonRes
         ]);
 
-        dump("response->getStatusCode()");
-        dump($response->getStatusCode());
+        $this->setApiResponseStatusCode($response->getStatusCode());
 
-        if ($response->getStatusCode() == 200) {
+        if ($this->getApiResponseStatusCode() == 200) {
             $this->setApiResponseRaw($response);
             $this->setApiResponseToArray($response->toArray());
             $this->setApiResponseUsage($response->toArray()["usage"]);
@@ -107,6 +109,26 @@ class ApiMistral
         } else {
             return false;
         }
+    }
+
+    private function setUrlNgrokDoc($doc)
+    {
+        $this->urlNgrokDoc = str_replace("/var/www/html/public/", $_ENV["NGROK_URL"], $doc);
+    }
+
+    public function getUrlNgrokDoc()
+    {
+        return $this->urlNgrokDoc;
+    }
+
+    private function setApiResponseStatusCode($statusCode)
+    {
+        $this->apiResponseStatusCode = $statusCode;
+    }
+
+    public function getApiResponseStatusCode()
+    {
+        return $this->apiResponseStatusCode;
     }
 
     private function setApiResponseObjet()

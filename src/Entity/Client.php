@@ -28,7 +28,7 @@ class Client
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $intiatedAt = null;
+    private ?\DateTimeImmutable $initializedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: Invoice::class)]
     private $invoices;
@@ -87,14 +87,14 @@ class Client
         return $this;
     }
 
-    public function getUploadedAt(): ?\DateTimeImmutable
+    public function getInitializedAt(): ?\DateTimeImmutable
     {
-        return $this->intiatedAt;
+        return $this->initializedAt;
     }
 
-    public function setIntiatedAt(\DateTimeImmutable $intiatedAt): self
+    public function setInitializedAt(\DateTimeImmutable $initializedAt): self
     {
-        $this->intiatedAt = $intiatedAt;
+        $this->initializedAt = $initializedAt;
         return $this;
     }
 

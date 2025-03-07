@@ -25,6 +25,9 @@ class Invoice
     #[ORM\Column]
     private ?\DateTimeImmutable $uploadedAt = null;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $factoredAt = null;
+
     #[ORM\Column(type: Types::TEXT)]
     private ?string $responseIa = null;
 
@@ -82,6 +85,17 @@ class Invoice
     public function setUploadedAt(\DateTimeImmutable $uploadedAt): self
     {
         $this->uploadedAt = $uploadedAt;
+        return $this;
+    }
+
+    public function getFactoredAt(): ?\DateTimeImmutable
+    {
+        return $this->factoredAt;
+    }
+
+    public function setFactoredAt(\DateTimeImmutable $factoredAt): self
+    {
+        $this->factoredAt = $factoredAt;
         return $this;
     }
 
