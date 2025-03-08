@@ -12,7 +12,11 @@ class Autre
     public function __construct(array $data)
     {
         $this->tools = new Tools();
-        $this->autre = $this->tools->arrayizeData($data["Autre"]);
+        if (isset($data["Autre"])) {
+            $this->autre = $this->tools->arrayizeData($data["Autre"]);
+        } else {
+            $this->autre = $this->tools->arrayizeData("");
+        }
     }
 
     public function getAutre(): array

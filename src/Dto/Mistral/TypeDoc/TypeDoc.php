@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Dto\Mistral\TypeDoc;
 
 class TypeDoc

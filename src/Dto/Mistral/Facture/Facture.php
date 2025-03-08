@@ -16,11 +16,20 @@ class Facture
     public function __construct(array $data)
     {
         $this->tools = new Tools();
-        $this->facture = $this->tools->arrayizeData($data["Facture"]);
+
+        if (isset($data["Facture"])) {
+            $this->facture = $this->tools->arrayizeData($data["Facture"]);
+        } else {
+            $this->facture = $this->tools->arrayizeData("");
+        }
         $this->reference = $data["Facture"]["refFacture"] ?? "";
         $date = DateTimeImmutable::createFromFormat("Y-m-d", $data["Facture"]["dateFacture"]);
         $this->date = $date ?: new DateTimeImmutable("1900-01-01");
-        $this->autre = $this->tools->arrayizeData($data["Facture"]["autreFacture"]);
+        if (isset($data["Facture"]["autreFacture"])) {
+            $this->autre = $this->tools->arrayizeData($data["Facture"]["autreFacture"]);
+        } else {
+            $this->autre = $this->tools->arrayizeData("");
+        }
     }
 
     public function getFacture(): array

@@ -5,7 +5,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\Tools;
-
+// TODO definir les type de sortie des methode 
 class ApiMistral
 {
     private $client;
@@ -53,7 +53,7 @@ class ApiMistral
         }
     }
 
-    public function getChatCompletionDoc(string $doc)
+    public function getChatCompletionDoc(string $doc): bool
     {
         $this->setUrlNgrokDoc($doc);
 
@@ -141,7 +141,7 @@ class ApiMistral
         $this->apiResponseArray = json_decode($this->tools->cleanString($this->getApiResponseMessage()), true);
     }
 
-    public function getApiResponseFormat($format)
+    public function getApiResponseFormat($format): \stdClass|array
     {
         switch ($format) {
             case 'array':
