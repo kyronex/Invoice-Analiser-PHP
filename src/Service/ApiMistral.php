@@ -5,12 +5,15 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\Tools;
+use App\Service\ApiNgrok;
+
 // TODO definir les type de sortie des methode 
 class ApiMistral
 {
     private $client;
     private $apiKey;
     private $fileConf;
+    private $apiNgrok;
     private $urlNgrokDoc;
     private $apiConf;
     private $apiResponseStatusCode;
@@ -22,11 +25,12 @@ class ApiMistral
     private $apiResponseArray;
     private $tools;
 
-    public function __construct(HttpClientInterface $client, string $apiKey, string $fileConf)
+    public function __construct(HttpClientInterface $client, string $apiKey, string $fileConf, ApiNgrok $apiNgrok,)
     {
         $this->client = $client;
         $this->apiKey = $apiKey;
         $this->fileConf = $fileConf;
+        $this->apiNgrok = $apiNgrok;
         $this->urlNgrokDoc = null;
         $this->apiConf = null;
         $this->apiResponseStatusCode = null;
@@ -56,10 +60,6 @@ class ApiMistral
     public function getChatCompletionDoc(string $doc): bool
     {
         $this->setUrlNgrokDoc($doc);
-
-        // TODO deplace code vers UPLOADS ou REJECTS Vers Service approprier
-        // dump($_ENV["DIR_STORAGE_UPLOADS"] . pathinfo($doc, PATHINFO_BASENAME));
-        // copy($doc, $_ENV["DIR_STORAGE_UPLOADS"] . pathinfo($doc, PATHINFO_BASENAME));
 
         $jsonRes = [
             'model' => $this->apiConf->modelM,
@@ -113,7 +113,7 @@ class ApiMistral
 
     private function setUrlNgrokDoc($doc)
     {
-        $this->urlNgrokDoc = str_replace("/var/www/html/public/", $_ENV["NGROK_URL"], $doc);
+        $this->urlNgrokDoc = str_replace("/var/www/html/public", $this->apiNgrok->getUrl(), $doc);
     }
 
     public function getUrlNgrokDoc()
@@ -153,7 +153,6 @@ class ApiMistral
                 break;
         }
     }
-
 
     private function setApiResponseMessage($message)
     {

@@ -3,7 +3,6 @@
 namespace App\Dto\Mistral\Autre;
 
 use App\Service\Tools;
-// TODO ajout MissingKeyTest et MissingKeyException , DefaultValue en fonction des different typage sur tout les DTO 
 class Autre
 {
     private $tools;

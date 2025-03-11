@@ -3,16 +3,26 @@
 namespace App\Dto\Mistral\Produits;
 
 use App\Service\Tools;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Produit
 {
     private $tools;
     private array $produit;
+    #[Assert\NotBlank]
     private string $description;
+    #[Assert\NotBlank]
     private string $nom;
+    #[Assert\NotBlank]
     private string $reference;
+    #[Assert\NotBlank]
+    #[Assert\Type("integer")]
     private int $quantite;
+    #[Assert\NotBlank]
+    #[Assert\Type("float")]
     private float $tauxTva;
+    #[Assert\NotBlank]
+    #[Assert\Type("float")]
     private float $prixHT;
 
     public function __construct(array $data)
@@ -25,7 +35,6 @@ class Produit
         $this->tauxTva = $data["tauxTvaProduit"] ?? 0;
         $this->prixHT = $data["prixHTProduit"] ?? 0;
         $this->produit = $this->getProduit();
-
     }
 
     public function getProduit(): array
@@ -58,7 +67,7 @@ class Produit
     {
         return $this->quantite;
     }
-    
+
     public function getTauxTva(): float
     {
         return $this->tauxTva;

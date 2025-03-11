@@ -2,16 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\InvoiceRepository;
+use App\Repository\RejectFileRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use DateTimeImmutable;
 
-#[ORM\Entity(repositoryClass: InvoiceRepository::class)]
-class Invoice
+#[ORM\Entity(repositoryClass: RejectFileRepository::class)]
+class RejectFile
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,34 +29,14 @@ class Invoice
     #[Assert\Type(DateTimeImmutable::class)]
     private ?DateTimeImmutable $uploadedAt = null;
 
-    #[ORM\Column]
-    #[Assert\NotNull]
-    #[Assert\Type(DateTimeImmutable::class)]
-    private ?DateTimeImmutable $factoredAt = null;
-
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
     private ?string $responseIa = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    private ?string $reference = null;
-
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
     private ?string $dirname = null;
 
-    #[ORM\ManyToOne(inversedBy: 'invoices', targetEntity: Client::class)]
-    #[ORM\JoinColumn(nullable: false)]
-    private $client;
-
-    #[ORM\OneToMany(mappedBy: 'invoice', targetEntity: FactureProduit::class)]
-    private $factureProduits;
-
-    public function __construct()
-    {
-        $this->factureProduits = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -87,7 +65,6 @@ class Invoice
         return $this;
     }
 
-
     public function getUploadedAt(): ?DateTimeImmutable
     {
         return $this->uploadedAt;
@@ -96,17 +73,6 @@ class Invoice
     public function setUploadedAt(DateTimeImmutable $uploadedAt): self
     {
         $this->uploadedAt = $uploadedAt;
-        return $this;
-    }
-
-    public function getFactoredAt(): ?DateTimeImmutable
-    {
-        return $this->factoredAt;
-    }
-
-    public function setFactoredAt(DateTimeImmutable $factoredAt): self
-    {
-        $this->factoredAt = $factoredAt;
         return $this;
     }
 
@@ -130,35 +96,5 @@ class Invoice
     {
         $this->dirname = $dirname;
         return $this;
-    }
-
-    public function getReference(): ?string
-    {
-        return $this->reference;
-    }
-
-    public function setReference(string $reference): self
-    {
-        $this->reference = $reference;
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function setClient(?Client $client): self
-    {
-        $this->client = $client;
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, FactureProduit>
-     */
-    public function getFactureProduit(): Collection
-    {
-        return $this->factureProduits;
     }
 }

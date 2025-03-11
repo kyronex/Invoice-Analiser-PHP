@@ -4,6 +4,7 @@ namespace App\Dto\Mistral\TypeDoc;
 
 class TypeDoc
 {
+    
     private string $type;
 
     public function __construct(array $data)

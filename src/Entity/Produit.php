@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\ProduitRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -16,19 +18,26 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $reference = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[Assert\NotNull]
+    #[Assert\Type(DateTimeImmutable::class)]
+    private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $initializedAt = null;
+    #[Assert\NotNull]
+    #[Assert\Type(DateTimeImmutable::class)]
+    private ?DateTimeImmutable $initializedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'produit', targetEntity: FactureProduit::class)]
     private $factureProduits;
@@ -80,23 +89,23 @@ class Produit
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
     }
 
-    public function getInitializedAt(): ?\DateTimeImmutable
+    public function getInitializedAt(): ?DateTimeImmutable
     {
         return $this->initializedAt;
     }
 
-    public function setInitializedAt(\DateTimeImmutable $initializedAt): self
+    public function setInitializedAt(DateTimeImmutable $initializedAt): self
     {
         $this->initializedAt = $initializedAt;
         return $this;

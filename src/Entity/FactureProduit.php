@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\FactureProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FactureProduitRepository::class)]
 class FactureProduit
@@ -22,6 +23,8 @@ class FactureProduit
     private $produit;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Type("integer")]
     private ?int $quantite;
 
     public function getId(): ?int

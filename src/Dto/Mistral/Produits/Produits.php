@@ -4,7 +4,6 @@ namespace App\Dto\Mistral\Produits;
 
 use App\Dto\Mistral\Produits\Produit;
 
-
 class Produits
 {
     private array $produits;
@@ -12,7 +11,6 @@ class Produits
     public function __construct(array $data)
     {
         $this->createDtoProduits($data);
-        
     }
 
     private function createDtoProduits(array $data)
@@ -22,7 +20,7 @@ class Produits
                 $dtoProduit = new Produit($value);
                 $this->produits[] = $dtoProduit->getProduit();
             }
-        }        
+        }
     }
 
     public function getProduits(): array
@@ -33,10 +31,9 @@ class Produits
     public function getOneProduits(int $key): array|false
     {
         if (array_key_exists($key, $this->getProduits())) {
-           return $this->produits[$key];
+            return $this->produits[$key];
         } else {
             return false;
         }
     }
-
 }

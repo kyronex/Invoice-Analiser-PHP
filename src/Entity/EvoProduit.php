@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\EvoProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use DateTimeImmutable;
 
 #[ORM\Entity(repositoryClass: EvoProduitRepository::class)]
 class EvoProduit
@@ -18,10 +20,14 @@ class EvoProduit
     private $produit;
 
     #[ORM\Column(type: 'float')]
+    #[Assert\NotBlank]
+    #[Assert\Type("float")]
     private ?float $prix = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $changedAt = null;
+    #[Assert\NotNull]
+    #[Assert\Type(DateTimeImmutable::class)]
+    private ?DateTimeImmutable $changedAt = null;
 
     public function getProduit(): ?Produit
     {
@@ -39,13 +45,13 @@ class EvoProduit
         return $this->id;
     }
 
-    public function setChangedAt(\DateTimeImmutable $changedAt): self
+    public function setChangedAt(DateTimeImmutable $changedAt): self
     {
         $this->changedAt = $changedAt;
         return $this;
     }
 
-    public function getChangedAt(): ?\DateTimeImmutable
+    public function getChangedAt(): ?DateTimeImmutable
     {
         return $this->changedAt;
     }

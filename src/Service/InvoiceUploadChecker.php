@@ -3,19 +3,22 @@
 // src/Service/InvoiceUploadChecker.php
 namespace App\Service;
 
+
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use App\Service\ApiMistral;
-use App\Service\Tools;
-use App\Entity\Invoice;
+use Doctrine\ORM\EntityManagerInterface;
+//use App\Entity\Invoice;
 use App\Dto\Mistral\TypeDoc\TypeDoc;
 use App\Dto\Mistral\Autre\Autre;
 use App\Dto\Mistral\Client\Client;
 use App\Dto\Mistral\Facture\Facture;
 use App\Dto\Mistral\Produits\Produits;
+use App\Service\ApiMistral;
+use App\Service\Tools;
+use App\Service\InvoiceFileManager;
 
 
 class InvoiceUploadChecker
@@ -25,6 +28,8 @@ class InvoiceUploadChecker
     private $parameterBag;
     private $apiMistral;
     private $tools;
+    private $invoiceFileManager;
+    private $validator;
 
 
     public function __construct(
@@ -32,13 +37,17 @@ class InvoiceUploadChecker
         EntityManagerInterface $entityManager,
         ParameterBagInterface $parameterBag,
         ApiMistral $apiMistral,
-        Tools $tools
+        Tools $tools,
+        InvoiceFileManager $invoiceFileManager,
+        ValidatorInterface $validator
     ) {
         $this->slugger = $slugger;
         $this->entMan = $entityManager;
         $this->parameterBag = $parameterBag;
         $this->apiMistral = $apiMistral;
         $this->tools = $tools;
+        $this->validator = $validator;
+        $this->invoiceFileManager = $invoiceFileManager;
     }
 
     public function checker(UploadedFile $file): bool
@@ -55,35 +64,40 @@ class InvoiceUploadChecker
             //dump($e);
             return false;
         }
-        $invoice = new Invoice();
-        $invoice->setFilename($newFilename);
-        $invoice->setOriginalFilename($originalFilename);
-        $invoice->setDirname($this->parameterBag->get('invoices_directory') . $newFilename);
-        $invoice->setUploadedAt(new \DateTimeImmutable());
+        // $invoice = new Invoice();
+        // $invoice->setFilename($newFilename);
+        // $invoice->setOriginalFilename($originalFilename);
+        // $invoice->setDirname($this->parameterBag->get('invoices_directory') . $newFilename);
+        // $invoice->setUploadedAt(new \DateTimeImmutable());
 
-        dump("invoice");
-        dump($invoice);
+        // dump("invoice");
+        // dump($invoice);
 
         $response = $this->apiMistral->getChatCompletionDoc($this->parameterBag->get('invoices_directory') . $newFilename);
 
-        dump("this->apiMistral->getUrlNgrokDoc()");
-        dump($this->apiMistral->getUrlNgrokDoc());
-        dump("this->apiMistral->getApiResponseStatusCode()");
-        dump($this->apiMistral->getApiResponseStatusCode());        
-        dump("response");
-        dump($response);
-
         if ($response) {
-            dump("this->apiMistral->getApiResponseFormat('array')");
-            dump($this->apiMistral->getApiResponseFormat('array'));
+            // dump("this->apiMistral->getApiResponseFormat('array')");
+            // dump($this->apiMistral->getApiResponseFormat('array'));
 
-            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat('array'));
+            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat('array'));            
             $dtoAutre = new Autre($this->apiMistral->getApiResponseFormat('array'));
             $dtoClient = new Client($this->apiMistral->getApiResponseFormat('array'));
+            
             $dtoFacture = new Facture($this->apiMistral->getApiResponseFormat('array'));
+            $errors = $this->validator->validate($dtoFacture);
+            
             $dtoProduits = new Produits($this->apiMistral->getApiResponseFormat('array'));
+            
+            dump("dtoFacture->getFacture()");
+            dump($dtoFacture->getFacture());
+            dump("errors");
+            dump($errors);
+            exit();
             if ($dtoTypeDoc->getType() == "Facture") {
                 dump("In if Facture");
+
+                $this->invoiceFileManager->firstMoveToStorageError($file);
+                $this->invoiceFileManager->firstMoveToStorage($file, $dtoTypeDoc);
 
                 // dump("Client");
                 // dump($dtoClient->getClient());
@@ -99,7 +113,9 @@ class InvoiceUploadChecker
             } else {
                 dump("In else Facture");
             }
+        } else {
+            $this->invoiceFileManager->firstMoveToStorageError($file);
         }
-        return $response ;
+        return $response;
     }
 }

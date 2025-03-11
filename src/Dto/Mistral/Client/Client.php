@@ -2,15 +2,18 @@
 
 namespace App\Dto\Mistral\Client;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Service\Tools;
 
 class Client
 {
     private $tools;
-
     private array $client;
+    #[Assert\NotBlank]
     private string $nom;
+    #[Assert\NotBlank]
     private string $prenom;
+    #[Assert\NotBlank]
     private string $adresse;
     private array $autre;
 
