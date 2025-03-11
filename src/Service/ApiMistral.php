@@ -11,19 +11,19 @@ use App\Service\ApiNgrok;
 class ApiMistral
 {
     private $client;
-    private $apiKey;
-    private $fileConf;
     private $apiNgrok;
-    private $urlNgrokDoc;
-    private $apiConf;
-    private $apiResponseStatusCode;
-    private $apiResponseRaw;
-    private $apiResponseToArray;
-    private $apiResponseUsage;
-    private $apiResponseMessage;
-    private $apiResponseObjet;
-    private $apiResponseArray;
     private $tools;
+    private string $apiKey;
+    private string $fileConf;
+    private ?string $urlNgrokDoc;
+    private ?object $apiConf;
+    private ?int $apiResponseStatusCode;
+    private ?object $apiResponseRaw;
+    private ?array $apiResponseToArray;
+    private ?array $apiResponseUsage;
+    private ?string $apiResponseMessage;
+    private ?object $apiResponseObjet;
+    private ?array $apiResponseArray;
 
     public function __construct(HttpClientInterface $client, string $apiKey, string $fileConf, ApiNgrok $apiNgrok,)
     {
@@ -111,22 +111,22 @@ class ApiMistral
         }
     }
 
-    private function setUrlNgrokDoc($doc)
+    private function setUrlNgrokDoc(string $doc)
     {
         $this->urlNgrokDoc = str_replace("/var/www/html/public", $this->apiNgrok->getUrl(), $doc);
     }
 
-    public function getUrlNgrokDoc()
+    public function getUrlNgrokDoc(): ?string
     {
         return $this->urlNgrokDoc;
     }
 
-    private function setApiResponseStatusCode($statusCode)
+    private function setApiResponseStatusCode(int $statusCode)
     {
         $this->apiResponseStatusCode = $statusCode;
     }
 
-    public function getApiResponseStatusCode()
+    public function getApiResponseStatusCode(): ?int
     {
         return $this->apiResponseStatusCode;
     }
@@ -141,7 +141,7 @@ class ApiMistral
         $this->apiResponseArray = json_decode($this->tools->cleanString($this->getApiResponseMessage()), true);
     }
 
-    public function getApiResponseFormat($format): \stdClass|array
+    public function getApiResponseFormat(string $format): \stdClass|array
     {
         switch ($format) {
             case 'array':
@@ -154,47 +154,47 @@ class ApiMistral
         }
     }
 
-    private function setApiResponseMessage($message)
+    private function setApiResponseMessage(string $message)
     {
         $this->apiResponseMessage = $message;
     }
 
-    public function getApiResponseMessage()
+    public function getApiResponseMessage(): string
     {
         return $this->apiResponseMessage;
     }
 
-    private function setApiResponseUsage($usage)
+    private function setApiResponseUsage(array $usage)
     {
         $this->apiResponseUsage = $usage;
     }
 
-    public function getApiResponseUsage()
+    public function getApiResponseUsage(): array
     {
         return $this->apiResponseUsage;
     }
 
-    private function setApiResponseToArray($response)
+    private function setApiResponseToArray(array $response)
     {
         $this->apiResponseToArray = $response;
     }
 
-    public function getApiResponseToArray()
+    public function getApiResponseToArray(): array
     {
         return $this->apiResponseToArray;
     }
 
-    private function setApiResponseRaw($response)
+    private function setApiResponseRaw(object $response)
     {
         $this->apiResponseRaw = $response;
     }
 
-    public function getApiResponseRaw()
+    public function getApiResponseRaw(): object
     {
         return $this->apiResponseRaw;
     }
 
-    public function getApiConf()
+    public function getApiConf(): object
     {
         return $this->apiConf;
     }

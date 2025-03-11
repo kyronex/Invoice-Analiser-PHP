@@ -9,7 +9,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class ApiNgrok
 {
     private $client;
-    private $urlNgrok;
+    private string $urlNgrok;
 
     public function __construct(HttpClientInterface $client, string $urlNgrok)
     {
@@ -17,7 +17,7 @@ class ApiNgrok
         $this->urlNgrok = $urlNgrok;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string|false
     {
         try {
             $response = $this->client->request('GET', $this->urlNgrok);

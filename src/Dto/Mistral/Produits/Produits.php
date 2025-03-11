@@ -3,9 +3,19 @@
 namespace App\Dto\Mistral\Produits;
 
 use App\Dto\Mistral\Produits\Produit;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Valid;
+
 
 class Produits
 {
+
+    #[Assert\NotNull]
+    #[Assert\Count(min: 1)]
+    #[Assert\All([
+        new Assert\Type(Produit::class)
+    ])]
+    #[Valid]
     private array $produits;
 
     public function __construct(array $data)
@@ -18,7 +28,7 @@ class Produits
         if (isset($data["Produits"])) {
             foreach ($data["Produits"] as $value) {
                 $dtoProduit = new Produit($value);
-                $this->produits[] = $dtoProduit->getProduit();
+                $this->produits[] = $dtoProduit;
             }
         }
     }

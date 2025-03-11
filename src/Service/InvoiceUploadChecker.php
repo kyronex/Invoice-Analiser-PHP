@@ -3,8 +3,6 @@
 // src/Service/InvoiceUploadChecker.php
 namespace App\Service;
 
-
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -19,6 +17,7 @@ use App\Dto\Mistral\Produits\Produits;
 use App\Service\ApiMistral;
 use App\Service\Tools;
 use App\Service\InvoiceFileManager;
+use App\Service\DtoValidator;
 
 
 class InvoiceUploadChecker
@@ -29,7 +28,7 @@ class InvoiceUploadChecker
     private $apiMistral;
     private $tools;
     private $invoiceFileManager;
-    private $validator;
+    private $dtoValidator;
 
 
     public function __construct(
@@ -39,14 +38,14 @@ class InvoiceUploadChecker
         ApiMistral $apiMistral,
         Tools $tools,
         InvoiceFileManager $invoiceFileManager,
-        ValidatorInterface $validator
+        DtoValidator $dtoValidator
     ) {
         $this->slugger = $slugger;
         $this->entMan = $entityManager;
         $this->parameterBag = $parameterBag;
         $this->apiMistral = $apiMistral;
         $this->tools = $tools;
-        $this->validator = $validator;
+        $this->dtoValidator = $dtoValidator;
         $this->invoiceFileManager = $invoiceFileManager;
     }
 
@@ -79,19 +78,29 @@ class InvoiceUploadChecker
             // dump("this->apiMistral->getApiResponseFormat('array')");
             // dump($this->apiMistral->getApiResponseFormat('array'));
 
-            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat('array'));            
+            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat('array'));
             $dtoAutre = new Autre($this->apiMistral->getApiResponseFormat('array'));
             $dtoClient = new Client($this->apiMistral->getApiResponseFormat('array'));
-            
             $dtoFacture = new Facture($this->apiMistral->getApiResponseFormat('array'));
-            $errors = $this->validator->validate($dtoFacture);
-            
             $dtoProduits = new Produits($this->apiMistral->getApiResponseFormat('array'));
+
+            $arrayDto = [
+                'autre' => $dtoAutre,
+                'client' => $dtoClient,
+                'facture' => $dtoFacture,
+                'produits' => $dtoProduits
+            ];
+
+            dump("arrayDto");
+            dump($arrayDto);
+
+            $dtoErrors = $this->dtoValidator->validateArrayDto($arrayDto);
             
-            dump("dtoFacture->getFacture()");
-            dump($dtoFacture->getFacture());
-            dump("errors");
-            dump($errors);
+            dump("dtoErrors");
+            dump($dtoErrors);
+            // $errors = $this->validator->validate($dtoFacture);
+            // dump("errors");
+            // dump($errors);
             exit();
             if ($dtoTypeDoc->getType() == "Facture") {
                 dump("In if Facture");
@@ -118,4 +127,6 @@ class InvoiceUploadChecker
         }
         return $response;
     }
+
+
 }

@@ -2,12 +2,10 @@
 
 namespace App\Dto\Mistral\Produits;
 
-use App\Service\Tools;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Produit
 {
-    private $tools;
     private array $produit;
     #[Assert\NotBlank]
     private string $description;
@@ -27,7 +25,6 @@ class Produit
 
     public function __construct(array $data)
     {
-        $this->tools = new Tools();
         $this->description = $data["descriptionProduit"] ?? "";
         $this->nom = $data["nomProduit"] ?? "";
         $this->reference = $data["refProduit"] ?? "";

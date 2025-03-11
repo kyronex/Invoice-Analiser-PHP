@@ -36,6 +36,7 @@ class InvoiceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Invoice::class,
+            'validation_groups' => false
         ]);
     }
 }

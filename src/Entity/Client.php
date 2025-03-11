@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeImmutable;
 
-// TODO mettre en place les contrainte de validation via attribut dans toute les entity
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
 {
