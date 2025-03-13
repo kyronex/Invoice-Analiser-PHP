@@ -9,6 +9,7 @@
 /var/
 /vendor/
 /public/uploads/invoices/
+/storage/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

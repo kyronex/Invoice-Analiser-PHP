@@ -20,6 +20,7 @@ class ApiMistral
     private ?int $apiResponseStatusCode;
     private ?object $apiResponseRaw;
     private ?array $apiResponseToArray;
+    private ?string $apiResponseToArrayJson;
     private ?array $apiResponseUsage;
     private ?string $apiResponseMessage;
     private ?object $apiResponseObjet;
@@ -36,6 +37,7 @@ class ApiMistral
         $this->apiResponseStatusCode = null;
         $this->apiResponseRaw = null;
         $this->apiResponseToArray = null;
+        $this->apiResponseToArrayJson = null;
         $this->apiResponseUsage = null;
         $this->apiResponseMessage = null;
         $this->apiResponseObjet = null;
@@ -101,6 +103,7 @@ class ApiMistral
         if ($this->getApiResponseStatusCode() == 200) {
             $this->setApiResponseRaw($response);
             $this->setApiResponseToArray($response->toArray());
+            $this->setApiResponseToArrayJson();
             $this->setApiResponseUsage($response->toArray()["usage"]);
             $this->setApiResponseMessage($response->toArray()["choices"][0]["message"]["content"]);
             $this->setApiResponseObjet();
@@ -156,7 +159,7 @@ class ApiMistral
 
     private function setApiResponseMessage(string $message)
     {
-        $this->apiResponseMessage = $message;
+        $this->apiResponseMessage = $this->tools->cleanString($message);
     }
 
     public function getApiResponseMessage(): string
@@ -182,6 +185,16 @@ class ApiMistral
     public function getApiResponseToArray(): array
     {
         return $this->apiResponseToArray;
+    }
+
+    private function setApiResponseToArrayJson()
+    {
+        $this->apiResponseToArrayJson = $this->tools->cleanString(json_encode($this->getApiResponseToArray()));
+    }
+
+    public function getApiResponseToArrayJson(): string
+    {
+        return $this->apiResponseToArrayJson;
     }
 
     private function setApiResponseRaw(object $response)
