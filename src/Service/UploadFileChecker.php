@@ -48,54 +48,55 @@ class UploadFileChecker
     {
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
-        $newFilename = $safeFilename . '-' . uniqid() . '.' . $uploadedFile->guessExtension();
+        $newFilename = $safeFilename . "-" . uniqid() . "." . $uploadedFile->guessExtension();
         try {
             $uploadedFile->move(
-                $this->parameterBag->get('invoices_directory'),
+                $this->parameterBag->get("invoices_directory"),
                 $newFilename
             );
-            $processFile = new File($this->parameterBag->get('invoices_directory') . $newFilename);
+            $processFile = new File($this->parameterBag->get("invoices_directory") . $newFilename);
         } catch (FileException $e) {
             //dump($e);
             return false;
         }
-
+        
         $response = $this->apiMistral->getChatCompletionDoc($processFile->getPathname());
         if ($response) {
-            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat('array'));
-            $dtoAutre = new Autre($this->apiMistral->getApiResponseFormat('array'));
-            $dtoClient = new Client($this->apiMistral->getApiResponseFormat('array'));
-            $dtoFacture = new Facture($this->apiMistral->getApiResponseFormat('array'));
-            $dtoProduits = new Produits($this->apiMistral->getApiResponseFormat('array'));
+            $dtoTypeDoc = new TypeDoc($this->apiMistral->getApiResponseFormat("array"));
+            $dtoAutre = new Autre($this->apiMistral->getApiResponseFormat("array"));
+            $dtoClient = new Client($this->apiMistral->getApiResponseFormat("array"));
+            $dtoFacture = new Facture($this->apiMistral->getApiResponseFormat("array"));
+            $dtoProduits = new Produits($this->apiMistral->getApiResponseFormat("array"));
             $dtoResponseJson = new ResponseJson($this->apiMistral->getApiResponseToArrayJson());
 
             $arrayDto = [
-                'type' => $dtoTypeDoc,
-                'autre' => $dtoAutre,
-                'client' => $dtoClient,
-                'facture' => $dtoFacture,
-                'produits' => $dtoProduits,
-                'responseJson' => $dtoResponseJson
+                "type" => $dtoTypeDoc,
+                "autre" => $dtoAutre,
+                "client" => $dtoClient,
+                "facture" => $dtoFacture,
+                "produits" => $dtoProduits,
+                "responseJson" => $dtoResponseJson
             ];
 
             if ($dtoTypeDoc->getType() == "Facture") {
                 //dump("In if Facture");
                 $dtoErrors = $this->dtoValidator->validateArrayDto($arrayDto);
-                $countDtoErrors = count($dtoErrors);
-                $countDtoErrors = 1;
-                dump("countDtoErrors");
-                dump($countDtoErrors);
-                if ($countDtoErrors > 0) {
+                if (count($dtoErrors) > 0) {
                     if ($processFile = $this->uploadFileManager->moveToStorageTarget($processFile, "reject")) {
-                        $this->uploadEntityManager->createEntityRejectFile($processFile, $uploadedFile, $arrayDto);
+                        $rejectFileEntity = $this->uploadEntityManager->createEntityRejectFile($processFile, $uploadedFile, $arrayDto);
                     } else {
                         return false;
                     }
                 }
+                if ($processFile = $this->uploadFileManager->moveToStorageTarget($processFile, "invoice")) {
+                    $Client = $this->uploadEntityManager->createEntityClient($arrayDto);
+                    //$invoiceFileEntity = $this->uploadEntityManager->createEntityInvoice($arrayDto);
+                } else {
+                    return false;
+                }
             } else {
-                dump("In else Facture");
-                if ($processFile =  $this->uploadFileManager->moveToStorageTarget($processFile, "reject")) {
-                    $this->uploadEntityManager->createEntityRejectFile($processFile, $uploadedFile, $arrayDto);
+                if ($processFile = $this->uploadFileManager->moveToStorageTarget($processFile, "reject")) {
+                    $rejectFileEntity = $this->uploadEntityManager->createEntityRejectFile($processFile, $uploadedFile, $arrayDto);
                 } else {
                     return false;
                 }

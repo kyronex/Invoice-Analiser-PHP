@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @extends ServiceEntityRepository<Client>
@@ -21,28 +23,21 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
-//    /**
-//     * @return Client[] Returns an array of Client objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Client
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Find a client by exact match of nom, prenom, and adresse (case-insensitive)
+     */
+    public function findDuplicate(array $param): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('LOWER(c.nom) = LOWER(:nom)')
+            ->andWhere('LOWER(c.prenom) = LOWER(:prenom)')
+            //->andWhere('LOWER(c.adresse) = LOWER(:adresse)')
+            ->setParameter("nom",$param["nom"])
+            ->setParameter("prenom",$param["prenom"])
+            //->setParameter("adresse",$param["adresse"])
+            ->orderBy('c.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+            //->getArrayResult();
+    }
 }

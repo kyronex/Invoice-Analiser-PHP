@@ -11,9 +11,9 @@ class UploadFileManager
 {
     private $parameterBag;
     private const TARGET_DIRECTORIES = [
-        'invoice' => 'dir_storage_invoices',
-        'reject'  => 'dir_storage_rejects',
-        'error'   => 'dir_storage_errors'
+        "invoice" => "dir_storage_invoices",
+        "reject"  => "dir_storage_rejects",
+        "error"   => "dir_storage_errors"
     ];
 
     public function __construct(ParameterBagInterface $parameterBag)
